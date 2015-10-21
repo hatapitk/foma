@@ -69,7 +69,6 @@ AC_SEARCH_LIBS([gzprintf], [z], [ ],
 		 [AC_MSG_FAILURE([no working zlib library was found])])
 
 # config files
-AC_CONFIG_FILES([Makefile
-                 src/Makefile])
+AC_CONFIG_FILES([Makefile])
 
 AC_OUTPUT

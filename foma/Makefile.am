@@ -17,11 +17,6 @@
 
 ACLOCAL_AMFLAGS = -I m4
 
-# Yacc and Flex AM options - they do not seem to have any effect, but
-# they are still added here for completeness:
-AM_YFLAGS="-d -t -v"
-AM_LFLAGS=-8
-
 VERSION = $(PACKAGE_VERSION)
 LIBRARY_RELEASE=0
 LIBRARY_VERSION=9:16:9
@@ -35,7 +30,7 @@ LEXCMATRIX = flex -8 --prefix=cmatrix
 
 # Linker flags:
 AM_CFLAGS = -O3 -Wall -D_GNU_SOURCE -std=c99 -fvisibility=hidden -fPIC
-AM_CPPFLAGS = -I${top_srcdir}/src
+AM_CPPFLAGS = 
 
 # Main targets
 lib_LTLIBRARIES = libfoma.la
@@ -48,7 +43,7 @@ c_sources = apply.c coaccessible.c constructions.c \
 			extract.c flags.c int_stack.c io.c \
 			lex.cmatrix.c lexc.h lex.lexc.c lex.yy.c lexcread.c \
 			mem.c minimize.c \
-			regex.tab.h regex.tab.c reverse.c rewrite.c \
+			regex.c reverse.c rewrite.c \
 			sigma.c spelling.c stringhash.c structures.c \
 			topsort.c trie.c utf8.c
 
@@ -73,9 +68,9 @@ cgflookup_LDADD   = libfoma.la
 cgflookup_LDFLAGS = -lz -static-libtool-libs
 
 # Make sure the regex header file is built before it is included:
-BUILT_SOURCES = regex.tab.h
+BUILT_SOURCES = regex.c regex.h
 
-lex.yy.c: regex.l regex.tab.h
+lex.yy.c: regex.l regex.h
 	$(LEX) regex.l
 
 lex.lexc.c: lexc.l
@@ -87,11 +82,8 @@ lex.interface.c: interface.l
 lex.cmatrix.c: cmatrix.l
 	$(LEXCMATRIX) $<
 
-regex.tab.c regex.tab.h: regex.y
-	$(YACC) $<
-
-# clean-local:
-# 	rm -f *.tab.* *.output lex.*
+regex.c regex.h: regex.y
+	$(YACC) --defines=$*.h --output=$*.c $<
 
 EXTRA_DIST= regex.l regex.y \
 			cmatrix.l interface.l \
